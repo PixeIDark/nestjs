@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { CreateJonDto } from 'src/jon/create-jon.dto';
+import { Jon } from 'src/jon/jon.entity';
+import { JonService } from 'src/jon/jon.service';
 
 @Controller('jon')
 export class JonController {
@@ -24,18 +26,25 @@ export class JonController {
   // }
 
   // curl "http://localhost:3000/jon/ab_fsacd"H^C
-  // @Get('ab*cd') <= *에 뭐든 다 글자수도 상관없이 들어가도 잘 실행됨.
+  // @Get('ab*cd') // <= *에 뭐든 다 글자수도 상관없이 들어가도 잘 실행됨.
   // findAll() {
   //   return 'This route uses a wildcard';
   // }
 
+  constructor(private readonly jonService: JonService) {}
+
+  @Get()
+  async findAll(): Promise<Jon[]> {
+    return await this.jonService.findAll();
+  }
+
   //curl -X POST http://localhost:3000/jon
   @Post()
-  async create(@Body() createJonDto: CreateJonDto): Promise<string> {
-    const { name, age } = createJonDto;
-    let { breed } = createJonDto;
-
+  async create(@Body() createJonDto: CreateJonDto): Promise<Jon> {
+    let { breed, ...rest } = createJonDto;
     if (breed === 'black') breed = 'nigro';
-    return `name: ${name}, age: ${age}, breed: ${breed}`;
+
+    const jonData = { ...rest, breed };
+    return await this.jonService.create(jonData);
   }
 }
