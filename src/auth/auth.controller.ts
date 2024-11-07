@@ -50,13 +50,6 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @ApiOperation({ summary: '프로필 조회' })
-  @ApiBearerAuth('access-token')
-  @ApiResponse({
-    status: 200,
-    description: '프로필 조회 성공',
-    type: User,
-  })
   @ApiOperation({ summary: '전체 사용자 조회 (관리자용)' })
   @ApiResponse({ status: 200, description: '조회 성공', type: [User] })
   @Post('admin/users')
@@ -64,6 +57,13 @@ export class AuthController {
     return this.authService.findAllUsers(body.adminPassword);
   }
 
+  @ApiOperation({ summary: '프로필 조회' })
+  @ApiBearerAuth('access-token')
+  @ApiResponse({
+    status: 200,
+    description: '프로필 조회 성공',
+    type: User,
+  })
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   getProfile(@Request() req) {
